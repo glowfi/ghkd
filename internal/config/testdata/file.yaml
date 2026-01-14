@@ -1,0 +1,5 @@
+keybindings:
+  # External file
+  - name: Backup
+    keys: super+shift+b
+    file: ~/.config/hotkeysd/scripts/backup.sh

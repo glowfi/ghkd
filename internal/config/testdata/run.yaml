@@ -1,0 +1,4 @@
+keybindings:
+  # Simple command
+  - keys: ctrl+alt+t
+    run: alacritty
