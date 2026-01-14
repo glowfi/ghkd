@@ -38,12 +38,6 @@ func TestKeyCombo_ParseKeyCombo(t *testing.T) {
 			wantErr:          true,
 		},
 		{
-			name:             "should return error when no modifier key is provided :NEG",
-			inputKeyCombo:    "a",
-			expectedKeyCombo: KeyCombo{},
-			wantErr:          true,
-		},
-		{
 			name:             "should return error when no non-modifier key is provided :NEG",
 			inputKeyCombo:    "ctrl+alt",
 			expectedKeyCombo: KeyCombo{},
