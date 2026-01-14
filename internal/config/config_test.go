@@ -33,14 +33,31 @@ func TestConfigMarshalUnmarshal(t *testing.T) {
 			wantMarshalErr:   nil,
 			wantUnMarshalErr: nil,
 		},
+		{
+			name: "simple run command :POS",
+			cfg: Config{
+				Keybindings: []Keybinding{
+					{
+						Name: "Open Alacritty",
+						Keys: "ctrl+alt+t",
+						Run:  "alacritty",
+					},
+				},
+			},
+			cfgYAMLBytes:     loadTestConfigYAML(t, "./testdata/run.yaml"),
+			wantMarshalErr:   nil,
+			wantUnMarshalErr: nil,
+		},
 	}
 
 	for _, tt := range tests {
+		// Marshal
 		gotCfgYAML, gotMarshalErr := yaml.Marshal(tt.cfg)
 
 		assert.ErrorIs(t, gotMarshalErr, tt.wantMarshalErr, "expect error to match while marshaling config")
 		assert.Equal(t, string(tt.cfgYAMLBytes), string(gotCfgYAML), "expect marshalled config yaml to match")
 
+		// Unmarshal
 		var gotCfg Config
 		gotUnmarshalErr := yaml.Unmarshal(tt.cfgYAMLBytes, &gotCfg)
 
