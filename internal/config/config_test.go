@@ -172,6 +172,25 @@ func TestConfig_Validate(t *testing.T) {
 			},
 			wantErr: true,
 		},
+		{
+			name: "should return error when multiple actions are provided :NEG",
+			inputConfig: Config{
+				Keybindings: []Keybinding{
+					{
+						Name: "foo",
+						Keys: "ctrl",
+
+						File: "~/foo.sh",
+
+						Run: "thunar",
+
+						Interpreter: "/bin/bash",
+						Script:      "echo 'hello';",
+					},
+				},
+			},
+			wantErr: true,
+		},
 	}
 
 	for _, tt := range tests {

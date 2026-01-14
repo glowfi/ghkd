@@ -40,7 +40,24 @@ func (cfg *Config) Validate() error {
 		// only one non modifier key must be present
 
 		// only one of the action must be present
+		if countActions(kb) > 1 {
+			return fmt.Errorf("only one of 'run', 'script', 'file' allowed for %s", kb.Name)
+		}
 	}
 
 	return nil
+}
+
+func countActions(kb Keybinding) int {
+	count := 0
+	if kb.Run != "" {
+		count++
+	}
+	if kb.Script != "" {
+		count++
+	}
+	if kb.File != "" {
+		count++
+	}
+	return count
 }
