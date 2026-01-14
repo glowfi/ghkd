@@ -1,6 +1,9 @@
 package config
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 type Keybinding struct {
 	// Identification
@@ -25,6 +28,11 @@ func (cfg *Config) Validate() error {
 		// name must be given
 		if kb.Name == "" {
 			return fmt.Errorf("name must be provided")
+		}
+
+		keys := strings.Split(kb.Keys, "+")
+		if len(keys) < 2 {
+			return fmt.Errorf("key must be provided for %s", kb.Name)
 		}
 
 		// atleast one modifier key must be present
