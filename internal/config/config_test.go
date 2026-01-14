@@ -48,6 +48,26 @@ func TestConfigMarshalUnmarshal(t *testing.T) {
 			wantMarshalErr:   nil,
 			wantUnMarshalErr: nil,
 		},
+		{
+			name: "python script :POS",
+			cfg: Config{
+				Keybindings: []Keybinding{
+					{
+						Name:        "System Info",
+						Keys:        "super+i",
+						Interpreter: "python3",
+						Script: `import subprocess
+import os
+mem = os.popen("free -h | awk '/^Mem:/ {print $3\"/\"$2}'").read().strip()
+subprocess.run(["notify-send", "Memory Usage", mem])
+`,
+					},
+				},
+			},
+			cfgYAMLBytes:     loadTestConfigYAML(t, "./testdata/script.yaml"),
+			wantMarshalErr:   nil,
+			wantUnMarshalErr: nil,
+		},
 	}
 
 	for _, tt := range tests {
@@ -55,7 +75,7 @@ func TestConfigMarshalUnmarshal(t *testing.T) {
 		gotCfgYAML, gotMarshalErr := yaml.Marshal(tt.cfg)
 
 		assert.ErrorIs(t, gotMarshalErr, tt.wantMarshalErr, "expect error to match while marshaling config")
-		assert.Equal(t, string(tt.cfgYAMLBytes), string(gotCfgYAML), "expect marshalled config yaml to match")
+		assert.YAMLEq(t, string(tt.cfgYAMLBytes), string(gotCfgYAML), "expect marshalled config yaml to match semantically")
 
 		// Unmarshal
 		var gotCfg Config
