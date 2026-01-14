@@ -148,6 +148,30 @@ func TestConfig_Validate(t *testing.T) {
 			},
 			wantErr: true,
 		},
+		{
+			name: "should return error when modifier key is not provided :NEG",
+			inputConfig: Config{
+				Keybindings: []Keybinding{
+					{
+						Name: "foo",
+						Keys: "a",
+					},
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name: "should return error when non-modifier key is not provided :NEG",
+			inputConfig: Config{
+				Keybindings: []Keybinding{
+					{
+						Name: "foo",
+						Keys: "ctrl",
+					},
+				},
+			},
+			wantErr: true,
+		},
 	}
 
 	for _, tt := range tests {
