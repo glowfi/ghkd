@@ -1,9 +1,9 @@
 keybindings:
-  - name: System Info
-    keys: super+i
-    interpreter: python3
-    script: |
-      import subprocess
-      import os
-      mem = os.popen("free -h | awk '/^Mem:/ {print $3\"/\"$2}'").read().strip()
-      subprocess.run(["notify-send", "Memory Usage", mem])
+- name: System Info
+  keys: super+i
+  interpreter: python3
+  script: |
+    import subprocess
+    import os
+    mem = os.popen("free -h | awk '/^Mem:/ {print $3\"/\"$2}'").read().strip()
+    subprocess.run(["notify-send", "Memory Usage", mem])

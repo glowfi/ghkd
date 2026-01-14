@@ -1,4 +1,4 @@
 keybindings:
-  # Simple command
-  - keys: ctrl+alt+t
-    run: alacritty
+- name: Open Alacritty
+  keys: ctrl+alt+t
+  run: alacritty
