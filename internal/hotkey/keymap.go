@@ -1,5 +1,7 @@
 package hotkey
 
+import "strings"
+
 var KeyNameToCode = map[string]uint16{
 	// Modifiers
 	"ctrl":       KEY_LEFTCTRL,
@@ -260,4 +262,15 @@ var ModifierKeys = map[string]uint16{
 	"win":        KEY_LEFTMETA,
 	"leftmeta":   KEY_LEFTMETA,
 	"rightmeta":  KEY_RIGHTMETA,
+}
+
+func IsModifier(code uint16) bool {
+	_, found := KeyCodeToName[code]
+	return found
+}
+
+func LookupKeyCode(name string) (uint16, bool) {
+	name = strings.ToLower(strings.TrimSpace(name))
+	code, ok := KeyNameToCode[name]
+	return code, ok
 }
