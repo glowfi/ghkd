@@ -6,14 +6,14 @@ type Config struct {
 
 type Keybinding struct {
 	// Identification
-	Name string `yaml:"name"`
-	Keys string `yaml:"keys"`
+	Name string `yaml:"name,omitempty"`
+	Keys string `yaml:"keys,omitempty"`
 
 	// Action - one of these must be set
-	File string `yaml:"file"` // External script: "~/script.sh"
+	File string `yaml:"file,omitempty"` // External script: "~/script.sh"
 
-	Run string `yaml:"run"` // Simple command: "alacritty"
+	Run string `yaml:"run,omitempty"` // Simple command: "alacritty"
 
-	Interpreter string `yaml:"interpreter"` // Script interpreter: "python3,node,bash"
-	Script      string `yaml:"script"`      // Script content
+	Interpreter string `yaml:"interpreter,omitempty"` // Script interpreter: "python3,node,bash"
+	Script      string `yaml:"script,omitempty"`      // Script content
 }
