@@ -43,6 +43,12 @@ func TestKeyCombo_ParseKeyCombo(t *testing.T) {
 			expectedKeyCombo: KeyCombo{},
 			wantErr:          ErrInvalidNonModifierCount,
 		},
+		{
+			name:             "should return error when more than no modifier keys are provided :NEG",
+			inputKeyCombo:    "a+b+c",
+			expectedKeyCombo: KeyCombo{},
+			wantErr:          ErrInvalidKeyComboFormat,
+		},
 	}
 
 	for _, tt := range tests {
