@@ -11,45 +11,45 @@ func TestKeyCombo_ParseKeyCombo(t *testing.T) {
 		name             string
 		inputKeyCombo    string
 		expectedKeyCombo KeyCombo
-		wantErr          bool
+		wantErr          error
 	}{
 		{
 			name:             "should return error when no key is provided :NEG",
 			inputKeyCombo:    "",
 			expectedKeyCombo: KeyCombo{},
-			wantErr:          true,
+			wantErr:          ErrInvalidKeyComboFormat,
 		},
 		{
 			name:             "should return error when combination of modifier and non-modifier is not provided :NEG",
 			inputKeyCombo:    "ctrl",
 			expectedKeyCombo: KeyCombo{},
-			wantErr:          true,
+			wantErr:          ErrInvalidKeyComboFormat,
 		},
 		{
 			name:             "should return error when invalid modifier key is provided :NEG",
 			inputKeyCombo:    "ctrl+altfoo+a",
 			expectedKeyCombo: KeyCombo{},
-			wantErr:          true,
+			wantErr:          ErrUnknownKey,
 		},
 		{
 			name:             "should return error when invalid non-modifier key is provided :NEG",
 			inputKeyCombo:    "ctrl+alt+foo",
 			expectedKeyCombo: KeyCombo{},
-			wantErr:          true,
+			wantErr:          ErrUnknownKey,
 		},
 		{
-			name:             "should return error when no non-modifier key is provided :NEG",
-			inputKeyCombo:    "ctrl+alt",
+			name:             "should return error when more than one non-modifier keys are provided :NEG",
+			inputKeyCombo:    "ctrl+alt+b+c",
 			expectedKeyCombo: KeyCombo{},
-			wantErr:          true,
+			wantErr:          ErrInvalidNonModifierCount,
 		},
 	}
 
 	for _, tt := range tests {
 		gotKeyCombo, gotErr := ParseKeyCombo(tt.inputKeyCombo)
 
-		if tt.wantErr {
-			assert.Error(t, gotErr, "expect error while parsing key combination")
+		if tt.wantErr != nil {
+			assert.ErrorIs(t, gotErr, tt.wantErr, "expect error to match")
 			return
 		}
 

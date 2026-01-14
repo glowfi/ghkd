@@ -1,8 +1,14 @@
 package hotkey
 
 import (
-	"fmt"
+	"errors"
 	"strings"
+)
+
+var (
+	ErrInvalidKeyComboFormat   = errors.New("atleast one combination of modifier and non-modifier key must be provided")
+	ErrInvalidNonModifierCount = errors.New("exactly one non‑modifier key must be provided")
+	ErrUnknownKey              = errors.New("unknown key")
 )
 
 // KeyCombo represents a parsed key combination
@@ -17,12 +23,12 @@ func ParseKeyCombo(s string) (KeyCombo, error) {
 
 	s = strings.TrimSpace(s)
 	if s == "" {
-		return KeyCombo{}, fmt.Errorf("empty key combination")
+		return KeyCombo{}, ErrInvalidKeyComboFormat
 	}
 
 	parts := strings.Split(s, "+")
 	if len(parts) < 2 {
-		return KeyCombo{}, fmt.Errorf("atleast one combination of modifier and non-modifier key must be provided")
+		return KeyCombo{}, ErrInvalidKeyComboFormat
 	}
 
 	var modifiers []uint16
@@ -31,7 +37,7 @@ func ParseKeyCombo(s string) (KeyCombo, error) {
 	for _, part := range parts {
 		code, found := LookupKeyCode(part)
 		if !found {
-			return KeyCombo{}, fmt.Errorf("unknown key: '%s'", part)
+			return KeyCombo{}, ErrUnknownKey
 		}
 
 		if IsModifier(code) {
@@ -42,7 +48,11 @@ func ParseKeyCombo(s string) (KeyCombo, error) {
 	}
 
 	if len(modifiers) < 1 {
-		return KeyCombo{}, fmt.Errorf("atleast one modifier key must be provided")
+		return KeyCombo{}, ErrInvalidKeyComboFormat
+	}
+
+	if len(nonModifiers) < 1 || len(nonModifiers) > 1 {
+		return KeyCombo{}, ErrInvalidNonModifierCount
 	}
 
 	return combo, nil
