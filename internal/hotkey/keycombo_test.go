@@ -25,6 +25,12 @@ func TestKeyCombo_ParseKeyCombo(t *testing.T) {
 			expectedKeyCombo: KeyCombo{},
 			wantErr:          true,
 		},
+		{
+			name:             "should return error when invalid modifier key is provided :NEG",
+			inputKeyCombo:    "ctrl+altfoo+a",
+			expectedKeyCombo: KeyCombo{},
+			wantErr:          true,
+		},
 	}
 
 	for _, tt := range tests {
