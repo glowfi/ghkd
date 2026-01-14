@@ -68,6 +68,21 @@ subprocess.run(["notify-send", "Memory Usage", mem])
 			wantMarshalErr:   nil,
 			wantUnMarshalErr: nil,
 		},
+		{
+			name: "external file :POS",
+			cfg: Config{
+				Keybindings: []Keybinding{
+					{
+						Name: "Backup",
+						Keys: "super+shift+b",
+						File: "~/.config/hotkeysd/scripts/backup.sh",
+					},
+				},
+			},
+			cfgYAMLBytes:     loadTestConfigYAML(t, "./testdata/file.yaml"),
+			wantMarshalErr:   nil,
+			wantUnMarshalErr: nil,
+		},
 	}
 
 	for _, tt := range tests {
