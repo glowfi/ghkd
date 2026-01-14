@@ -49,6 +49,19 @@ func TestKeyCombo_ParseKeyCombo(t *testing.T) {
 			expectedKeyCombo: KeyCombo{},
 			wantErr:          ErrInvalidKeyComboFormat,
 		},
+		{
+			name:          "should parse key combo successfully :POS",
+			inputKeyCombo: "ctrl+SHIFT+b",
+			expectedKeyCombo: KeyCombo{
+				Modifiers: []uint16{
+					KEY_LEFTCTRL,
+					KEY_LEFTSHIFT,
+				},
+				Key: KEY_B,
+				Raw: "ctrl+SHIFT+b",
+			},
+			wantErr: nil,
+		},
 	}
 
 	for _, tt := range tests {
