@@ -41,5 +41,9 @@ func ParseKeyCombo(s string) (KeyCombo, error) {
 		}
 	}
 
+	if len(modifiers) < 1 {
+		return KeyCombo{}, fmt.Errorf("atleast one modifier key must be provided")
+	}
+
 	return combo, nil
 }
