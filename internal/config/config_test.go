@@ -118,3 +118,34 @@ subprocess.run(["notify-send", "Memory Usage", mem])
 		assert.Equal(t, tt.cfg, gotCfg, "expect unmarshalled config to match")
 	}
 }
+
+func TestConfig_Validate(t *testing.T) {
+	tests := []struct {
+		name        string
+		inputConfig Config
+		wantErr     bool
+	}{
+		{
+			name: "should return error when no name is provided :NEG",
+			inputConfig: Config{
+				Keybindings: []Keybinding{
+					{
+						Name: "",
+					},
+				},
+			},
+			wantErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		gotErr := tt.inputConfig.Validate()
+
+		if tt.wantErr {
+			assert.Error(t, gotErr, "expect error while validating config")
+			return
+		}
+
+		assert.NoError(t, gotErr, "expect no error while validating config")
+	}
+}
