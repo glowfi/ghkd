@@ -83,6 +83,36 @@ subprocess.run(["notify-send", "Memory Usage", mem])
 			wantMarshalErr:   nil,
 			wantUnMarshalErr: nil,
 		},
+		{
+			name: "multiple keybindings :POS",
+			cfg: Config{
+				Keybindings: []Keybinding{
+					{
+						Name: "Open Alacritty",
+						Keys: "ctrl+alt+t",
+						Run:  "alacritty",
+					},
+					{
+						Name:        "System Info",
+						Keys:        "super+i",
+						Interpreter: "python3",
+						Script: `import subprocess
+import os
+mem = os.popen("free -h | awk '/^Mem:/ {print $3\"/\"$2}'").read().strip()
+subprocess.run(["notify-send", "Memory Usage", mem])
+`,
+					},
+					{
+						Name: "Backup",
+						Keys: "super+shift+b",
+						File: "~/.config/hotkeysd/scripts/backup.sh",
+					},
+				},
+			},
+			cfgYAMLBytes:     loadTestConfigYAML(t, "./testdata/multi.yaml"),
+			wantMarshalErr:   nil,
+			wantUnMarshalErr: nil,
+		},
 	}
 
 	for _, tt := range tests {
