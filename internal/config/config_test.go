@@ -18,20 +18,16 @@ func loadTestConfigYAML(t *testing.T, path string) []byte {
 
 func TestConfigMarshalUnmarshal(t *testing.T) {
 	tests := []struct {
-		name             string
-		cfg              Config
-		cfgYAMLBytes     []byte
-		wantMarshalErr   error
-		wantUnMarshalErr error
+		name         string
+		cfg          Config
+		cfgYAMLBytes []byte
 	}{
 		{
 			name: "empty keybindings :POS",
 			cfg: Config{
 				Keybindings: []Keybinding{},
 			},
-			cfgYAMLBytes:     loadTestConfigYAML(t, "./testdata/empty.yaml"),
-			wantMarshalErr:   nil,
-			wantUnMarshalErr: nil,
+			cfgYAMLBytes: loadTestConfigYAML(t, "./testdata/empty.yaml"),
 		},
 		{
 			name: "simple run command :POS",
@@ -44,9 +40,7 @@ func TestConfigMarshalUnmarshal(t *testing.T) {
 					},
 				},
 			},
-			cfgYAMLBytes:     loadTestConfigYAML(t, "./testdata/run.yaml"),
-			wantMarshalErr:   nil,
-			wantUnMarshalErr: nil,
+			cfgYAMLBytes: loadTestConfigYAML(t, "./testdata/run.yaml"),
 		},
 		{
 			name: "python script :POS",
@@ -64,9 +58,7 @@ subprocess.run(["notify-send", "Memory Usage", mem])
 					},
 				},
 			},
-			cfgYAMLBytes:     loadTestConfigYAML(t, "./testdata/script.yaml"),
-			wantMarshalErr:   nil,
-			wantUnMarshalErr: nil,
+			cfgYAMLBytes: loadTestConfigYAML(t, "./testdata/script.yaml"),
 		},
 		{
 			name: "external file :POS",
@@ -79,9 +71,7 @@ subprocess.run(["notify-send", "Memory Usage", mem])
 					},
 				},
 			},
-			cfgYAMLBytes:     loadTestConfigYAML(t, "./testdata/file.yaml"),
-			wantMarshalErr:   nil,
-			wantUnMarshalErr: nil,
+			cfgYAMLBytes: loadTestConfigYAML(t, "./testdata/file.yaml"),
 		},
 		{
 			name: "multiple keybindings :POS",
@@ -109,9 +99,7 @@ subprocess.run(["notify-send", "Memory Usage", mem])
 					},
 				},
 			},
-			cfgYAMLBytes:     loadTestConfigYAML(t, "./testdata/multi.yaml"),
-			wantMarshalErr:   nil,
-			wantUnMarshalErr: nil,
+			cfgYAMLBytes: loadTestConfigYAML(t, "./testdata/multi.yaml"),
 		},
 	}
 
@@ -119,14 +107,14 @@ subprocess.run(["notify-send", "Memory Usage", mem])
 		// Marshal
 		gotCfgYAML, gotMarshalErr := yaml.Marshal(tt.cfg)
 
-		assert.ErrorIs(t, gotMarshalErr, tt.wantMarshalErr, "expect error to match while marshaling config")
-		assert.YAMLEq(t, string(tt.cfgYAMLBytes), string(gotCfgYAML), "expect marshalled config yaml to match semantically")
+		assert.NoError(t, gotMarshalErr, "expect no error while marshaling config")
+		assert.YAMLEq(t, string(tt.cfgYAMLBytes), string(gotCfgYAML), "expect marshalled config yaml to match")
 
 		// Unmarshal
 		var gotCfg Config
 		gotUnmarshalErr := yaml.Unmarshal(tt.cfgYAMLBytes, &gotCfg)
 
-		assert.ErrorIs(t, gotUnmarshalErr, tt.wantUnMarshalErr, "expect error to match while unmarshaling config")
+		assert.NoError(t, gotUnmarshalErr, "expect no error while unmarshaling config")
 		assert.Equal(t, tt.cfg, gotCfg, "expect unmarshalled config to match")
 	}
 }
