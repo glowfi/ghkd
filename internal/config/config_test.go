@@ -159,9 +159,15 @@ func TestConfig_LoadConfig(t *testing.T) {
 		},
 		{
 			name:           "should return error when alteast one modifier key is not provided :NEG",
-			configPath:     "./testdata/load_config/no_key.yaml",
+			configPath:     "./testdata/load_config/no_modifier_key.yaml",
 			expectedConfig: Config{},
 			wantErr:        hotkey.ErrInvalidKeyComboFormat,
+		},
+		{
+			name:           "should return error when exactly one modifier key is not provided :NEG",
+			configPath:     "./testdata/load_config/no_non_modifier_key.yaml",
+			expectedConfig: Config{},
+			wantErr:        hotkey.ErrInvalidNonModifierCount,
 		},
 	}
 
