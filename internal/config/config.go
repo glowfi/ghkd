@@ -13,7 +13,6 @@ var (
 	ErrMultipleActions        = errors.New("only one of 'run', 'script', 'file' allowed")
 	ErrNoAction               = errors.New("must provide one of one of 'run', 'script', 'file'")
 	ErrScriptNeedsInterpreter = errors.New("'script' requires 'interpreter'")
-	ErrInterpreterNeedsScript = errors.New("'interpreter' requires 'script'")
 )
 
 type Keybinding struct {
@@ -60,10 +59,6 @@ func LoadConfig(path string) (Config, error) {
 
 		if kb.Script != "" && kb.Interpreter == "" {
 			return Config{}, ErrScriptNeedsInterpreter
-		}
-
-		if kb.Interpreter != "" && kb.Script == "" {
-			return Config{}, ErrInterpreterNeedsScript
 		}
 	}
 

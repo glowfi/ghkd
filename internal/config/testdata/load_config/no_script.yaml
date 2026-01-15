@@ -1,0 +1,4 @@
+keybindings:
+- name: System Info
+  keys: super+i
+  interpreter: python3

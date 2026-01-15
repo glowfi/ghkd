@@ -193,6 +193,12 @@ func TestConfig_LoadConfig(t *testing.T) {
 			expectedConfig: Config{},
 			wantErr:        ErrScriptNeedsInterpreter,
 		},
+		{
+			name:           "should return error when interpreter is set and no script is provided :NEG",
+			configPath:     "./testdata/load_config/no_script.yaml",
+			expectedConfig: Config{},
+			wantErr:        ErrNoAction,
+		},
 	}
 
 	for _, tt := range tests {
