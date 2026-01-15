@@ -84,6 +84,11 @@ func TestKeyCombo_String(t *testing.T) {
 		expectedKeyCombo string
 	}{
 		{
+			name:             "should return key combo invalid string representation for empty key combo input :NEG",
+			inputKeyCombo:    KeyCombo{},
+			expectedKeyCombo: "",
+		},
+		{
 			name: "should return key combo invalid string representation for invalid key combo input :NEG",
 			inputKeyCombo: KeyCombo{
 				Modifiers: []uint16{
