@@ -11,6 +11,7 @@ import (
 var (
 	ErrMissingKeybindingName = errors.New("must provide a name to the keybinding")
 	ErrMultipleActions       = errors.New("only one of 'run', 'script', 'file' allowed")
+	ErrNoAction              = errors.New("must provide one of one of 'run', 'script', 'file'")
 )
 
 type Keybinding struct {
@@ -45,6 +46,10 @@ func LoadConfig(path string) (Config, error) {
 	for _, kb := range cfg.Keybindings {
 		if kb.Name == "" {
 			return Config{}, ErrMissingKeybindingName
+		}
+
+		if countActions(kb) == 0 {
+			return Config{}, ErrNoAction
 		}
 
 		if countActions(kb) > 1 {

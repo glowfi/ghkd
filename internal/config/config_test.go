@@ -181,6 +181,12 @@ func TestConfig_LoadConfig(t *testing.T) {
 			expectedConfig: Config{},
 			wantErr:        ErrMultipleActions,
 		},
+		{
+			name:           "should return error when no action is provided :NEG",
+			configPath:     "./testdata/load_config/no_action.yaml",
+			expectedConfig: Config{},
+			wantErr:        ErrNoAction,
+		},
 	}
 
 	for _, tt := range tests {

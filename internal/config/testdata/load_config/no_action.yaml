@@ -1,0 +1,3 @@
+keybindings:
+- name: Backup
+  keys: "ctrl+alt+b"
