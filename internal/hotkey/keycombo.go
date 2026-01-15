@@ -57,3 +57,24 @@ func ParseKeyCombo(s string) (KeyCombo, error) {
 
 	return combo, nil
 }
+
+func (kc KeyCombo) String() string {
+	if kc.Raw != "" {
+		return kc.Raw
+	}
+
+	var parts []string
+	for _, mod := range kc.Modifiers {
+		name, found := LookupKeyName(mod)
+		if found {
+			parts = append(parts, name)
+		}
+	}
+	if kc.Key != 0 {
+		name, found := LookupKeyName(kc.Key)
+		if found {
+			parts = append(parts, name)
+		}
+	}
+	return strings.Join(parts, "+")
+}

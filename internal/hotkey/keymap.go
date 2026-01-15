@@ -274,3 +274,10 @@ func LookupKeyCode(name string) (uint16, bool) {
 	code, ok := KeyNameToCode[name]
 	return code, ok
 }
+
+func LookupKeyName(code uint16) (string, bool) {
+	if name, ok := KeyCodeToName[code]; ok {
+		return name, true
+	}
+	return "unknown", false
+}

@@ -76,3 +76,29 @@ func TestKeyCombo_ParseKeyCombo(t *testing.T) {
 		assert.Equal(t, tt.expectedKeyCombo, gotKeyCombo, "expect key combination to match")
 	}
 }
+
+func TestKeyCombo_String(t *testing.T) {
+	tests := []struct {
+		name             string
+		inputKeyCombo    KeyCombo
+		expectedKeyCombo string
+	}{
+		{
+			name: "should return key combo string representation for valid key combo input :POS",
+			inputKeyCombo: KeyCombo{
+				Modifiers: []uint16{
+					KEY_LEFTCTRL, KEY_LEFTALT,
+				},
+				Key: KEY_S,
+				Raw: "ctrl+alt+s",
+			},
+			expectedKeyCombo: "ctrl+alt+s",
+		},
+	}
+
+	for _, tt := range tests {
+		gotKeyCombo := tt.inputKeyCombo.String()
+
+		assert.Equal(t, tt.expectedKeyCombo, gotKeyCombo, "expect key combo string representation to match")
+	}
+}
