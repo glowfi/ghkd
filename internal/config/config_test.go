@@ -143,3 +143,26 @@ subprocess.run(["notify-send", "Memory Usage", mem])
 		assert.Equal(t, tt.cfg, gotCfg, "expect unmarshalled config to match")
 	}
 }
+
+func TestConfig_LoadConfig(t *testing.T) {
+	tests := []struct {
+		name           string
+		configPath     string
+		expectedConfig Config
+		wantErr        error
+	}{
+		{
+			name:           "should return error when no key is provided in one of the key bindings :NEG",
+			configPath:     "./testdata/load_config/no_key.yaml",
+			expectedConfig: Config{},
+			wantErr:        hotkey.ErrInvalidKeyComboFormat,
+		},
+	}
+
+	for _, tt := range tests {
+		gotConfig, gotErr := LoadConfig(tt.configPath)
+
+		assert.ErrorIs(t, gotErr, tt.wantErr, "expect error to match")
+		assert.Equal(t, tt.expectedConfig, gotConfig, "expect config to match")
+	}
+}
