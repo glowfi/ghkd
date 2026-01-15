@@ -84,13 +84,22 @@ func TestKeyCombo_String(t *testing.T) {
 		expectedKeyCombo string
 	}{
 		{
+			name: "should return key combo invalid string representation for invalid key combo input :NEG",
+			inputKeyCombo: KeyCombo{
+				Modifiers: []uint16{
+					10_000, 20_000,
+				},
+				Key: 30_000,
+			},
+			expectedKeyCombo: "",
+		},
+		{
 			name: "should return key combo string representation for valid key combo input :POS",
 			inputKeyCombo: KeyCombo{
 				Modifiers: []uint16{
 					KEY_LEFTCTRL, KEY_LEFTALT,
 				},
 				Key: KEY_S,
-				Raw: "ctrl+alt+s",
 			},
 			expectedKeyCombo: "ctrl+alt+s",
 		},
