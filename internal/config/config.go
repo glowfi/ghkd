@@ -1,14 +1,13 @@
 package config
 
 import (
-	"fmt"
-	"strings"
+	"github.com/glowfi/ghkd/internal/hotkey"
 )
 
 type Keybinding struct {
 	// Identification
-	Name string `yaml:"name"`
-	Keys string `yaml:"keys"`
+	Name string          `yaml:"name"`
+	Keys hotkey.KeyCombo `yaml:"keys"`
 
 	// Action - one of these must be set
 	File string `yaml:"file,omitempty"` // External script: "~/script.sh"
@@ -21,43 +20,4 @@ type Keybinding struct {
 
 type Config struct {
 	Keybindings []Keybinding `yaml:"keybindings"`
-}
-
-func (cfg *Config) Validate() error {
-	for _, kb := range cfg.Keybindings {
-		// name must be given
-		if kb.Name == "" {
-			return fmt.Errorf("name must be provided")
-		}
-
-		keys := strings.Split(kb.Keys, "+")
-		if len(keys) < 2 {
-			return fmt.Errorf("key must be provided for %s", kb.Name)
-		}
-
-		// atleast one modifier key must be present
-
-		// only one non modifier key must be present
-
-		// only one of the action must be present
-		if countActions(kb) > 1 {
-			return fmt.Errorf("only one of 'run', 'script', 'file' allowed for %s", kb.Name)
-		}
-	}
-
-	return nil
-}
-
-func countActions(kb Keybinding) int {
-	count := 0
-	if kb.Run != "" {
-		count++
-	}
-	if kb.Script != "" {
-		count++
-	}
-	if kb.File != "" {
-		count++
-	}
-	return count
 }
