@@ -9,9 +9,11 @@ import (
 )
 
 var (
-	ErrMissingKeybindingName = errors.New("must provide a name to the keybinding")
-	ErrMultipleActions       = errors.New("only one of 'run', 'script', 'file' allowed")
-	ErrNoAction              = errors.New("must provide one of one of 'run', 'script', 'file'")
+	ErrMissingKeybindingName  = errors.New("must provide a name to the keybinding")
+	ErrMultipleActions        = errors.New("only one of 'run', 'script', 'file' allowed")
+	ErrNoAction               = errors.New("must provide one of one of 'run', 'script', 'file'")
+	ErrScriptNeedsInterpreter = errors.New("'script' requires 'interpreter'")
+	ErrInterpreterNeedsScript = errors.New("'interpreter' requires 'script'")
 )
 
 type Keybinding struct {
@@ -54,6 +56,14 @@ func LoadConfig(path string) (Config, error) {
 
 		if countActions(kb) > 1 {
 			return Config{}, ErrMultipleActions
+		}
+
+		if kb.Script != "" && kb.Interpreter == "" {
+			return Config{}, ErrScriptNeedsInterpreter
+		}
+
+		if kb.Interpreter != "" && kb.Script == "" {
+			return Config{}, ErrInterpreterNeedsScript
 		}
 	}
 
