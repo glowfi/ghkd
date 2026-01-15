@@ -28,7 +28,7 @@ func TestConfigMarshalUnmarshal(t *testing.T) {
 			cfg: Config{
 				Keybindings: []Keybinding{},
 			},
-			cfgYAMLBytes: loadTestConfigYAML(t, "./testdata/empty.yaml"),
+			cfgYAMLBytes: loadTestConfigYAML(t, "./testdata/marshal_unmarshal_config/empty.yaml"),
 		},
 		{
 			name: "simple run command :POS",
@@ -45,7 +45,7 @@ func TestConfigMarshalUnmarshal(t *testing.T) {
 					},
 				},
 			},
-			cfgYAMLBytes: loadTestConfigYAML(t, "./testdata/run.yaml"),
+			cfgYAMLBytes: loadTestConfigYAML(t, "./testdata/marshal_unmarshal_config/run.yaml"),
 		},
 		{
 			name: "python script :POS",
@@ -67,7 +67,7 @@ subprocess.run(["notify-send", "Memory Usage", mem])
 					},
 				},
 			},
-			cfgYAMLBytes: loadTestConfigYAML(t, "./testdata/script.yaml"),
+			cfgYAMLBytes: loadTestConfigYAML(t, "./testdata/marshal_unmarshal_config/script.yaml"),
 		},
 		{
 			name: "external file :POS",
@@ -84,7 +84,7 @@ subprocess.run(["notify-send", "Memory Usage", mem])
 					},
 				},
 			},
-			cfgYAMLBytes: loadTestConfigYAML(t, "./testdata/file.yaml"),
+			cfgYAMLBytes: loadTestConfigYAML(t, "./testdata/marshal_unmarshal_config/file.yaml"),
 		},
 		{
 			name: "multiple keybindings :POS",
@@ -124,7 +124,7 @@ subprocess.run(["notify-send", "Memory Usage", mem])
 					},
 				},
 			},
-			cfgYAMLBytes: loadTestConfigYAML(t, "./testdata/multi.yaml"),
+			cfgYAMLBytes: loadTestConfigYAML(t, "./testdata/marshal_unmarshal_config/multi.yaml"),
 		},
 	}
 
