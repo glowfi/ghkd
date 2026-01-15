@@ -199,6 +199,47 @@ func TestConfig_LoadConfig(t *testing.T) {
 			expectedConfig: Config{},
 			wantErr:        ErrNoAction,
 		},
+		{
+			name:       "should successfully load valid configuration :POS",
+			configPath: "./testdata/load_config/valid_config.yaml",
+			expectedConfig: Config{
+				Keybindings: []Keybinding{
+					{
+						Name: "Open Alacritty",
+						KeyCombination: hotkey.KeyCombo{
+							Modifiers: []uint16{hotkey.KEY_LEFTCTRL, hotkey.KEY_LEFTALT},
+							Key:       hotkey.KEY_T,
+							Raw:       "ctrl+alt+t",
+						},
+						Run: "alacritty",
+					},
+					{
+						Name: "System Info",
+						KeyCombination: hotkey.KeyCombo{
+							Modifiers: []uint16{hotkey.KEY_LEFTMETA},
+							Key:       hotkey.KEY_I,
+							Raw:       "super+i",
+						},
+						Interpreter: "python3",
+						Script: `import subprocess
+import os
+mem = os.popen("free -h | awk '/^Mem:/ {print $3\"/\"$2}'").read().strip()
+subprocess.run(["notify-send", "Memory Usage", mem])
+`,
+					},
+					{
+						Name: "Backup",
+						KeyCombination: hotkey.KeyCombo{
+							Modifiers: []uint16{hotkey.KEY_LEFTMETA, hotkey.KEY_LEFTSHIFT},
+							Key:       hotkey.KEY_B,
+							Raw:       "super+shift+b",
+						},
+						File: "~/.config/hotkeysd/scripts/backup.sh",
+					},
+				},
+			},
+			wantErr: nil,
+		},
 	}
 
 	for _, tt := range tests {
