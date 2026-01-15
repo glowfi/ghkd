@@ -1,11 +1,14 @@
 package config
 
 import (
+	"errors"
 	"os"
 
 	"github.com/glowfi/ghkd/internal/hotkey"
 	"github.com/goccy/go-yaml"
 )
+
+var ErrMissingKeybindingName = errors.New("must provide a name to the keybinding")
 
 type Keybinding struct {
 	// Identification
@@ -34,6 +37,12 @@ func LoadConfig(path string) (Config, error) {
 	var cfg Config
 	if err := yaml.Unmarshal(data, &cfg); err != nil {
 		return Config{}, err
+	}
+
+	for _, kb := range cfg.Keybindings {
+		if kb.Name == "" {
+			return Config{}, ErrMissingKeybindingName
+		}
 	}
 
 	return cfg, nil

@@ -1,0 +1,4 @@
+keybindings:
+- name: ""
+  keys: "ctrl+b"
+  file: ~/.config/hotkeysd/scripts/backup.sh

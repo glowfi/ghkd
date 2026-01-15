@@ -169,6 +169,12 @@ func TestConfig_LoadConfig(t *testing.T) {
 			expectedConfig: Config{},
 			wantErr:        hotkey.ErrInvalidNonModifierCount,
 		},
+		{
+			name:           "should return error when no name is provided for the keybinding :NEG",
+			configPath:     "./testdata/load_config/no_name.yaml",
+			expectedConfig: Config{},
+			wantErr:        ErrMissingKeybindingName,
+		},
 	}
 
 	for _, tt := range tests {
