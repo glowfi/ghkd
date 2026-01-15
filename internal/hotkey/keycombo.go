@@ -41,7 +41,7 @@ func ParseKeyCombo(s string) (KeyCombo, error) {
 			return KeyCombo{}, ErrUnknownKey
 		}
 
-		if IsModifier(code) {
+		if IsModifier(part) {
 			modifiers = append(modifiers, code)
 		} else {
 			nonModifiers = append(nonModifiers, code)
@@ -55,6 +55,9 @@ func ParseKeyCombo(s string) (KeyCombo, error) {
 	if len(nonModifiers) < 1 || len(nonModifiers) > 1 {
 		return KeyCombo{}, ErrInvalidNonModifierCount
 	}
+
+	combo.Modifiers = modifiers
+	combo.Key = nonModifiers[0]
 
 	return combo, nil
 }

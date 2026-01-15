@@ -1,6 +1,8 @@
 package hotkey
 
-import "strings"
+import (
+	"strings"
+)
 
 var KeyNameToCode = map[string]uint16{
 	// Modifiers
@@ -264,8 +266,8 @@ var ModifierKeys = map[string]uint16{
 	"rightmeta":  KEY_RIGHTMETA,
 }
 
-func IsModifier(code uint16) bool {
-	_, found := KeyCodeToName[code]
+func IsModifier(keyStr string) bool {
+	_, found := ModifierKeys[keyStr]
 	return found
 }
 

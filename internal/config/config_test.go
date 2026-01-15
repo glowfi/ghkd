@@ -4,6 +4,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/glowfi/ghkd/internal/hotkey"
 	"github.com/goccy/go-yaml"
 	"github.com/stretchr/testify/assert"
 )
@@ -35,8 +36,12 @@ func TestConfigMarshalUnmarshal(t *testing.T) {
 				Keybindings: []Keybinding{
 					{
 						Name: "Open Alacritty",
-						Keys: "ctrl+alt+t",
-						Run:  "alacritty",
+						KeyCombination: hotkey.KeyCombo{
+							Modifiers: []uint16{hotkey.KEY_LEFTCTRL, hotkey.KEY_LEFTALT},
+							Key:       hotkey.KEY_T,
+							Raw:       "ctrl+alt+t",
+						},
+						Run: "alacritty",
 					},
 				},
 			},
@@ -47,8 +52,12 @@ func TestConfigMarshalUnmarshal(t *testing.T) {
 			cfg: Config{
 				Keybindings: []Keybinding{
 					{
-						Name:        "System Info",
-						Keys:        "super+i",
+						Name: "System Info",
+						KeyCombination: hotkey.KeyCombo{
+							Modifiers: []uint16{hotkey.KEY_LEFTMETA},
+							Key:       hotkey.KEY_I,
+							Raw:       "super+i",
+						},
 						Interpreter: "python3",
 						Script: `import subprocess
 import os
@@ -66,7 +75,11 @@ subprocess.run(["notify-send", "Memory Usage", mem])
 				Keybindings: []Keybinding{
 					{
 						Name: "Backup",
-						Keys: "super+shift+b",
+						KeyCombination: hotkey.KeyCombo{
+							Modifiers: []uint16{hotkey.KEY_LEFTMETA, hotkey.KEY_LEFTSHIFT},
+							Key:       hotkey.KEY_B,
+							Raw:       "super+shift+b",
+						},
 						File: "~/.config/hotkeysd/scripts/backup.sh",
 					},
 				},
@@ -79,12 +92,20 @@ subprocess.run(["notify-send", "Memory Usage", mem])
 				Keybindings: []Keybinding{
 					{
 						Name: "Open Alacritty",
-						Keys: "ctrl+alt+t",
-						Run:  "alacritty",
+						KeyCombination: hotkey.KeyCombo{
+							Modifiers: []uint16{hotkey.KEY_LEFTCTRL, hotkey.KEY_LEFTALT},
+							Key:       hotkey.KEY_T,
+							Raw:       "ctrl+alt+t",
+						},
+						Run: "alacritty",
 					},
 					{
-						Name:        "System Info",
-						Keys:        "super+i",
+						Name: "System Info",
+						KeyCombination: hotkey.KeyCombo{
+							Modifiers: []uint16{hotkey.KEY_LEFTMETA},
+							Key:       hotkey.KEY_I,
+							Raw:       "super+i",
+						},
 						Interpreter: "python3",
 						Script: `import subprocess
 import os
@@ -94,7 +115,11 @@ subprocess.run(["notify-send", "Memory Usage", mem])
 					},
 					{
 						Name: "Backup",
-						Keys: "super+shift+b",
+						KeyCombination: hotkey.KeyCombo{
+							Modifiers: []uint16{hotkey.KEY_LEFTMETA, hotkey.KEY_LEFTSHIFT},
+							Key:       hotkey.KEY_B,
+							Raw:       "super+shift+b",
+						},
 						File: "~/.config/hotkeysd/scripts/backup.sh",
 					},
 				},

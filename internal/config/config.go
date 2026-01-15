@@ -6,8 +6,8 @@ import (
 
 type Keybinding struct {
 	// Identification
-	Name string          `yaml:"name"`
-	Keys hotkey.KeyCombo `yaml:"keys"`
+	Name           string          `yaml:"name"`
+	KeyCombination hotkey.KeyCombo `yaml:"keys"`
 
 	// Action - one of these must be set
 	File string `yaml:"file,omitempty"` // External script: "~/script.sh"
