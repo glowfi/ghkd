@@ -81,7 +81,7 @@ func (kc KeyCombo) String() string {
 }
 
 // UnmarshalYAML implements custom YAML unmarshaling
-func (kc *KeyCombo) UnmarshalYAML(unmarshal func(interface{}) error) error {
+func (kc *KeyCombo) UnmarshalYAML(unmarshal func(any) error) error {
 	var raw string
 	if err := unmarshal(&raw); err != nil {
 		return err
@@ -97,6 +97,6 @@ func (kc *KeyCombo) UnmarshalYAML(unmarshal func(interface{}) error) error {
 }
 
 // MarshalYAML implements custom YAML marshaling
-func (kc KeyCombo) MarshalYAML() (interface{}, error) {
+func (kc KeyCombo) MarshalYAML() (any, error) {
 	return kc.String(), nil
 }
