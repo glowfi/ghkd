@@ -2,6 +2,7 @@ package config
 
 import (
 	"errors"
+	"fmt"
 	"os"
 
 	"github.com/glowfi/ghkd/internal/hotkey"
@@ -50,15 +51,15 @@ func LoadConfig(path string) (Config, error) {
 		}
 
 		if countActions(kb) == 0 {
-			return Config{}, ErrNoAction
+			return Config{}, fmt.Errorf("%s: %w", kb.Name, ErrNoAction)
 		}
 
 		if countActions(kb) > 1 {
-			return Config{}, ErrMultipleActions
+			return Config{}, fmt.Errorf("%s: %w", kb.Name, ErrMultipleActions)
 		}
 
 		if kb.Script != "" && kb.Interpreter == "" {
-			return Config{}, ErrScriptNeedsInterpreter
+			return Config{}, fmt.Errorf("%s: %w", kb.Name, ErrScriptNeedsInterpreter)
 		}
 	}
 
