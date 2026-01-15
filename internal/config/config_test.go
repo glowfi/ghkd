@@ -157,6 +157,12 @@ func TestConfig_LoadConfig(t *testing.T) {
 			expectedConfig: Config{},
 			wantErr:        hotkey.ErrInvalidKeyComboFormat,
 		},
+		{
+			name:           "should return error when alteast one modifier key is not provided :NEG",
+			configPath:     "./testdata/load_config/no_key.yaml",
+			expectedConfig: Config{},
+			wantErr:        hotkey.ErrInvalidKeyComboFormat,
+		},
 	}
 
 	for _, tt := range tests {

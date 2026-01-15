@@ -1,0 +1,4 @@
+keybindings:
+- name: Backup
+  keys: "a"
+  file: ~/.config/hotkeysd/scripts/backup.sh
