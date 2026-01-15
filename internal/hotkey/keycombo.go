@@ -2,6 +2,7 @@ package hotkey
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 )
 
@@ -77,4 +78,25 @@ func (kc KeyCombo) String() string {
 		}
 	}
 	return strings.Join(parts, "+")
+}
+
+// UnmarshalYAML implements custom YAML unmarshaling
+func (kc *KeyCombo) UnmarshalYAML(unmarshal func(interface{}) error) error {
+	var raw string
+	if err := unmarshal(&raw); err != nil {
+		return err
+	}
+
+	parsed, err := ParseKeyCombo(raw)
+	if err != nil {
+		return fmt.Errorf("parse key combination '%s': %w", raw, err)
+	}
+
+	*kc = parsed
+	return nil
+}
+
+// MarshalYAML implements custom YAML marshaling
+func (kc KeyCombo) MarshalYAML() (interface{}, error) {
+	return kc.String(), nil
 }
