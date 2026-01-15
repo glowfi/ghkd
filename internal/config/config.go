@@ -8,7 +8,10 @@ import (
 	"github.com/goccy/go-yaml"
 )
 
-var ErrMissingKeybindingName = errors.New("must provide a name to the keybinding")
+var (
+	ErrMissingKeybindingName = errors.New("must provide a name to the keybinding")
+	ErrMultipleActions       = errors.New("only one of 'run', 'script', 'file' allowed")
+)
 
 type Keybinding struct {
 	// Identification
@@ -43,7 +46,25 @@ func LoadConfig(path string) (Config, error) {
 		if kb.Name == "" {
 			return Config{}, ErrMissingKeybindingName
 		}
+
+		if countActions(kb) > 1 {
+			return Config{}, ErrMultipleActions
+		}
 	}
 
 	return cfg, nil
+}
+
+func countActions(kb Keybinding) int {
+	count := 0
+	if kb.Run != "" {
+		count++
+	}
+	if kb.Script != "" {
+		count++
+	}
+	if kb.File != "" {
+		count++
+	}
+	return count
 }

@@ -1,0 +1,11 @@
+keybindings:
+- name: Backup
+  keys: "ctrl+alt+b"
+  file: ~/.config/hotkeysd/scripts/backup.sh
+  run: "thunar"
+  interpreter: python3
+  script: |
+    import subprocess
+    import os
+    mem = os.popen("free -h | awk '/^Mem:/ {print $3\"/\"$2}'").read().strip()
+    subprocess.run(["notify-send", "Memory Usage", mem])

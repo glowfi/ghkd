@@ -175,6 +175,12 @@ func TestConfig_LoadConfig(t *testing.T) {
 			expectedConfig: Config{},
 			wantErr:        ErrMissingKeybindingName,
 		},
+		{
+			name:           "should return error when multiple actions are provided :NEG",
+			configPath:     "./testdata/load_config/multi_action.yaml",
+			expectedConfig: Config{},
+			wantErr:        ErrMultipleActions,
+		},
 	}
 
 	for _, tt := range tests {
