@@ -5,6 +5,13 @@ import (
 )
 
 const (
+	EV_KEY       = 1
+	KEY_RELEASED = 0
+	KEY_PRESSED  = 1
+	KEY_REPEAT   = 2
+)
+
+const (
 	// Standard keys
 	KEY_ESC        = evdev.KEY_ESC
 	KEY_1          = evdev.KEY_1
