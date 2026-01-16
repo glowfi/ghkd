@@ -135,6 +135,16 @@ func TestKeyCombo_Matches(t *testing.T) {
 			wantMatches: false,
 		},
 		{
+			name: "should not match key combination when keys are not same as in pressed :NEG",
+			inputKeyCombo: KeyCombo{
+				Modifiers: []uint16{KEY_LEFTCTRL, KEY_LEFTALT},
+				Key:       KEY_B,
+				Raw:       "ctrl+alt+b",
+			},
+			pressed:     []uint16{KEY_LEFTMETA, KEY_B},
+			wantMatches: false,
+		},
+		{
 			name: "should match key combination when same keys are pressed in same order :POS",
 			inputKeyCombo: KeyCombo{
 				Modifiers: []uint16{KEY_LEFTCTRL, KEY_LEFTALT},
