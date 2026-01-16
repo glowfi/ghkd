@@ -10,10 +10,12 @@ import (
 )
 
 var (
-	ErrMissingKeybindingName  = errors.New("must provide a name to the keybinding")
-	ErrMultipleActions        = errors.New("only one of 'run', 'script', 'file' allowed")
-	ErrNoAction               = errors.New("must provide one of one of 'run', 'script', 'file'")
-	ErrScriptNeedsInterpreter = errors.New("'script' requires 'interpreter'")
+	ErrMissingKeybindingName   = errors.New("must provide a name to the keybinding")
+	ErrMultipleActions         = errors.New("only one of 'run', 'script', 'file' allowed")
+	ErrNoAction                = errors.New("must provide one of one of 'run', 'script', 'file'")
+	ErrScriptNeedsInterpreter  = errors.New("'script' requires 'interpreter'")
+	ErrDuplicateKeybinding     = errors.New("duplicate keybinding found")
+	ErrDuplicateKeybindingName = errors.New("duplicate keybinding name found")
 )
 
 type Keybinding struct {
@@ -45,6 +47,9 @@ func LoadConfig(path string) (Config, error) {
 		return Config{}, err
 	}
 
+	seenKeybindings := map[string]bool{}
+	seenKeybindingsName := map[string]bool{}
+
 	for _, kb := range cfg.Keybindings {
 		if kb.Name == "" {
 			return Config{}, ErrMissingKeybindingName
@@ -61,6 +66,19 @@ func LoadConfig(path string) (Config, error) {
 		if kb.Script != "" && kb.Interpreter == "" {
 			return Config{}, fmt.Errorf("%s: %w", kb.Name, ErrScriptNeedsInterpreter)
 		}
+
+		_, KeyBindingexists := seenKeybindings[kb.KeyCombination.Raw]
+		if KeyBindingexists {
+			return Config{}, fmt.Errorf("%s: %w", kb.Name, ErrDuplicateKeybinding)
+		}
+
+		_, KeyBindingNameexists := seenKeybindingsName[kb.Name]
+		if KeyBindingNameexists {
+			return Config{}, fmt.Errorf("%s: %w", kb.Name, ErrDuplicateKeybindingName)
+		}
+
+		seenKeybindingsName[kb.Name] = true
+		seenKeybindings[kb.KeyCombination.Raw] = true
 	}
 
 	return cfg, nil
