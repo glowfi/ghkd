@@ -116,3 +116,29 @@ func TestKeyCombo_String(t *testing.T) {
 		assert.Equal(t, tt.expectedKeyCombo, gotKeyCombo, "expect key combo string representation to match")
 	}
 }
+
+func TestKeyCombo_Matches(t *testing.T) {
+	tests := []struct {
+		name          string
+		inputKeyCombo KeyCombo
+		pressed       []uint16
+		wantMatches   bool
+	}{
+		{
+			name: "should match key combination when same keys are pressed in same order :POS",
+			inputKeyCombo: KeyCombo{
+				Modifiers: []uint16{KEY_LEFTCTRL, KEY_LEFTALT},
+				Key:       KEY_B,
+				Raw:       "ctrl+alt+b",
+			},
+			pressed:     []uint16{KEY_LEFTCTRL, KEY_LEFTALT, KEY_B},
+			wantMatches: true,
+		},
+	}
+
+	for _, tt := range tests {
+		gotMatches := tt.inputKeyCombo.Matches(tt.pressed)
+
+		assert.Equal(t, tt.wantMatches, gotMatches, "expect matches to be equal")
+	}
+}

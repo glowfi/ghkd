@@ -103,3 +103,23 @@ func (kc *KeyCombo) UnmarshalYAML(unmarshal func(any) error) error {
 func (kc KeyCombo) MarshalYAML() (any, error) {
 	return kc.String(), nil
 }
+
+// Matches checks if pressed keys match this combo
+func (kc KeyCombo) Matches(pressed []uint16) bool {
+	n := len(kc.Modifiers) + 1
+	if len(pressed) != n {
+		return false
+	}
+
+	if kc.Key != pressed[n-1] {
+		return false
+	}
+
+	for idx, val := range kc.Modifiers {
+		if val != pressed[idx] {
+			return false
+		}
+	}
+
+	return true
+}
