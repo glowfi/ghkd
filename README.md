@@ -21,7 +21,7 @@ It reads input directly from the kernel (`evdev`), which means it works **everyw
 ### Prerequisites
 
 - Linux Kernel
-- Go 1.21+ (to build)
+- Go 1.21+ (only if building from source)
 
 ### Build from Source
 
@@ -32,6 +32,14 @@ go build -o ghkd ./main.go
 sudo mv ghkd /usr/local/bin/
 cd ..
 rm -rf ghkd
+```
+
+### Install from releases
+
+```bash
+wget "https://github.com/glowfi/ghkd/releases/download/v1.0.0/ghkd_linux_amd64" -O "ghkd_linux_amd64"
+chmod +x ghkd_linux_amd64
+sudo mv ghkd_linux_amd64 /usr/local/bin/
 ```
 
 ## 🔐 Permissions Setup
