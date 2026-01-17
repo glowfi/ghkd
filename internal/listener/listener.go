@@ -8,7 +8,7 @@ import (
 	"sync"
 
 	"github.com/glowfi/ghkd/internal/hotkey"
-	evdev "github.com/gvalkov/golang-evdev"
+	"github.com/holoplot/go-evdev"
 )
 
 const inputDir = "/dev/input"
@@ -17,6 +17,7 @@ type Listener struct {
 	pressed []uint16
 	devices []*evdev.InputDevice
 	eventsC chan uint16
+	wg      sync.WaitGroup
 	mu      sync.RWMutex
 }
 
@@ -39,26 +40,38 @@ func (l *Listener) Start(ctx context.Context) error {
 	for _, path := range keyboards {
 		device, err := evdev.Open(path)
 		if err != nil {
-			continue
+			return err
+		}
+
+		// Set non-blocking mode so Close() can interrupt ReadOne()
+		if err := device.NonBlock(); err != nil {
+			device.Close()
+			return err
 		}
 
 		l.devices = append(l.devices, device)
-		fmt.Printf("Listening: %s\n", device.Name)
+
+		devName, err := device.Name()
+		if err != nil {
+			return err
+		}
+
+		fmt.Printf("Listening: %s\n", devName)
 		go l.readDevice(ctx, device)
 	}
 
 	return nil
 }
 
-func (l *Listener) read(ctx context.Context, device *evdev.InputDevice) {
-	events, err := device.Read()
+func (l *Listener) read(ctx context.Context, device *evdev.InputDevice) error {
+	events, err := device.ReadSlice(1)
 	if err != nil {
-		return
+		return err
 	}
 
 	for _, ev := range events {
 		if ctx.Err() != nil {
-			return
+			return ctx.Err()
 		}
 
 		if ev.Type != hotkey.EV_KEY {
@@ -78,7 +91,7 @@ func (l *Listener) read(ctx context.Context, device *evdev.InputDevice) {
 			}
 		case hotkey.KEY_RELEASED:
 			idx := slices.IndexFunc(l.pressed, func(code uint16) bool {
-				return code == ev.Code
+				return code == uint16(ev.Code)
 			})
 			if idx != -1 {
 				l.pressed = append(l.pressed[:idx], l.pressed[idx+1:]...)
@@ -86,6 +99,8 @@ func (l *Listener) read(ctx context.Context, device *evdev.InputDevice) {
 		}
 		l.mu.Unlock()
 	}
+
+	return nil
 }
 
 func (l *Listener) readDevice(ctx context.Context, device *evdev.InputDevice) {
@@ -94,7 +109,9 @@ func (l *Listener) readDevice(ctx context.Context, device *evdev.InputDevice) {
 		case <-ctx.Done():
 			return
 		default:
-			l.read(ctx, device)
+			if err := l.read(ctx, device); err != nil {
+				continue
+			}
 		}
 	}
 }
@@ -120,18 +137,18 @@ func isKeyboard(path string) bool {
 	if err != nil {
 		return false
 	}
-	defer device.File.Close()
+	defer device.Close()
 
-	for capType, codes := range device.Capabilities {
-		if capType.Type != evdev.EV_KEY {
-			continue
-		}
-		for _, code := range codes {
-			if code.Code >= 16 && code.Code <= 25 {
-				return true
-			}
+	// Get supported keys for EV_KEY type
+	codes := device.CapableEvents(evdev.EV_KEY)
+
+	// Check for letter keys (KEY_Q=16 to KEY_P=25)
+	for _, code := range codes {
+		if code >= 16 && code <= 25 {
+			return true
 		}
 	}
+
 	return false
 }
 
@@ -150,7 +167,7 @@ func (l *Listener) Events() <-chan uint16 {
 
 func (l *Listener) Stop() {
 	for _, dev := range l.devices {
-		dev.File.Close()
+		dev.Close()
 	}
 
 	close(l.eventsC)

@@ -1,7 +1,7 @@
 package hotkey
 
 import (
-	evdev "github.com/gvalkov/golang-evdev"
+	evdev "github.com/holoplot/go-evdev"
 )
 
 const (
