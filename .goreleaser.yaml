@@ -10,12 +10,11 @@ builds:
       - linux
     goarch:
       - amd64
-    main: ./cmd/ghkd
+    main: ./main.go
     binary: ghkd
 
 archives:
   - format: binary
-    # This template will name the file like: ghkd_linux_amd64
     name_template: >-
       {{ .Binary }}_
       {{- .Os }}_
