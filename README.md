@@ -104,19 +104,11 @@ Manage the daemon easily with flags.
 
 ### ⚡ Quick Workflow
 
-1.  **Start the daemon:**
-    ```bash
-    ghkd -b
-    ```
-2.  **Edit your config file.**
-3.  **Apply changes:**
-    ```bash
-    ghkd -r
-    ```
-4.  **Stop it:**
-    ```bash
-    ghkd -k
-    ```
+**Must provide a config path can be anywhere**
+
+```sh
+ghkd -b -c ~/.config/ghkd/config.yaml
+```
 
 ## ❓ Troubleshooting
 
