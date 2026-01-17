@@ -57,9 +57,6 @@ Create your config at `~/.config/ghkd/config.yaml`.
 ### 📝 Example Config
 
 ```yaml
-settings:
-    log_level: info
-
 keybindings:
     # 🚀 MODE 1: Simple Command
     - name: Terminal
@@ -74,7 +71,7 @@ keybindings:
     # Great for logic involving variables or pipes!
     - name: System Info
       keys: super+i
-      interpreter: python3
+      interpreter: python3 # this can be anything as long as interpreter is installed in your system node,ruby,bash,etc.
       script: |
           import platform
           print(f"OS: {platform.system()}")
