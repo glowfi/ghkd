@@ -15,9 +15,9 @@ const inputDir = "/dev/input"
 
 type Listener struct {
 	pressed []uint16
+	devices []*evdev.InputDevice
 	eventsC chan uint16
 	mu      sync.RWMutex
-	wg      sync.WaitGroup
 }
 
 func NewListener() *Listener {
@@ -41,24 +41,26 @@ func (l *Listener) Start(ctx context.Context) error {
 		if err != nil {
 			continue
 		}
+
+		l.devices = append(l.devices, device)
 		fmt.Printf("Listening: %s\n", device.Name)
-		l.wg.Add(1)
-		go func() {
-			defer l.wg.Done()
-			l.readDevice(ctx, device)
-		}()
+		go l.readDevice(ctx, device)
 	}
 
 	return nil
 }
 
-func (l *Listener) read(device *evdev.InputDevice) {
+func (l *Listener) read(ctx context.Context, device *evdev.InputDevice) {
 	events, err := device.Read()
 	if err != nil {
 		return
 	}
 
 	for _, ev := range events {
+		if ctx.Err() != nil {
+			return
+		}
+
 		if ev.Type != hotkey.EV_KEY {
 			continue
 		}
@@ -87,14 +89,12 @@ func (l *Listener) read(device *evdev.InputDevice) {
 }
 
 func (l *Listener) readDevice(ctx context.Context, device *evdev.InputDevice) {
-	defer device.File.Close()
-
 	for {
 		select {
 		case <-ctx.Done():
 			return
 		default:
-			l.read(device)
+			l.read(ctx, device)
 		}
 	}
 }
@@ -149,6 +149,9 @@ func (l *Listener) Events() <-chan uint16 {
 }
 
 func (l *Listener) Stop() {
+	for _, dev := range l.devices {
+		dev.File.Close()
+	}
+
 	close(l.eventsC)
-	l.wg.Wait()
 }
