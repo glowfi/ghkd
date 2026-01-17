@@ -1,102 +1,133 @@
-# ghkd
+# 🎹 ghkd - Go Hotkey Daemon
 
-ghkd is a lightweight, distribution-agnostic hotkey daemon for Linux written in Go. It interfaces directly with the Linux kernel input subsystem (evdev), allowing it to function independently of the display server (works on Wayland, X11, and TTY).
+**ghkd** is a blazing fast, system-level hotkey daemon for Linux. 🚀
 
-## Features
+It reads input directly from the kernel (`evdev`), which means it works **everywhere**: Wayland, X11, and even the TTY console. No more fighting with compositor-specific config files!
 
-- **Display Server Agnostic:** Direct evdev implementation means it works regardless of your window manager or desktop environment.
-- **Three Execution Modes:**
-    - **Run:** Execute simple shell commands.
-    - **Script:** Embed scripts (Bash, Python, Node, etc.) directly in the config.
-    - **File:** Execute external script files.
-- **Smart Device Detection:** Automatically detects keyboard devices and filters out mice or other input peripherals.
-- **Graceful Shutdown:** Handles `SIGINT`/`SIGTERM` to safely terminate running child processes and clean up temporary files before exiting.
-- **Async Execution:** Runs commands asynchronously without blocking input processing.
+## ✨ Features
 
-## Requirements
+- **🖥️ Display Server Agnostic:** Works perfectly on Hyprland, Sway, Gnome, KDE, X11, or no GUI at all.
+- **📦 Zero Dependencies:** Written in pure Go. No bloat, no X11 libraries required.
+- **⚡ 3 Execution Modes:**
+    1.  **Run:** Execute simple commands.
+    2.  **Script:** Write inline Bash/Python/Node scripts directly in your config.
+    3.  **File:** Execute external scripts.
+- **🔄 Hot Reload:** Update your config on the fly without restarting.
+- **🛡️ Smart Detection:** Automatically detects keyboards and ignores mice/peripherals.
+- **👻 Background Mode:** Built-in daemon management (start, stop, reload).
 
-- Linux
+## 🛠️ Installation
+
+### Prerequisites
+
+- Linux Kernel
 - Go 1.21+ (to build)
-- User privileges: Root or membership in the `input` group
 
-## Installation
+### Build from Source
 
 ```bash
-git clone https://github.com/yourusername/ghkd.git
+git clone https://github.com/glowfi/ghkd.git
 cd ghkd
-go build -o ghkd ./cmd/ghkd
+go build -o ghkd ./main.go
+sudo mv ghkd /usr/local/bin/
+cd ..
+rm -rf ghkd
 ```
 
-## Running
+## 🔐 Permissions Setup
 
-ghkd reads directly from `/dev/input/event*`. You must have permission to read these files.
+Since **ghkd** reads hardware input directly, it needs access to `/dev/input/`. You do **not** need root if you add your user to the `input` group.
 
-**Option 1: Input Group (Recommended)**
-Add your user to the input group. You must log out and log back in for this to take effect.
+1.  **Add user to group:**
+    ```bash
+    sudo usermod -aG input $USER
+    ```
+2.  **Reboot** (or log out & log in) for changes to take effect. ⚠️
 
-```bash
-sudo usermod -aG input $USER
-```
+## ⚙️ Configuration
 
-**Option 2: Root**
+Create your config at `~/.config/ghkd/config.yaml`.
 
-```bash
-sudo ./ghkd
-```
+### 🔑 Syntax
 
-## Configuration
+- **Modifiers:** `ctrl`, `alt`, `shift`, `super` (meta/win).
+- **Keys:** `a-z`, `0-9`, `f1-f12`, `print`, `space`, `enter`, etc.
+- **Media:** `volumeup`, `mute`, `playpause`, `brightnessup`, etc.
 
-The daemon looks for a `config.yaml` file.
-
-### Structure
+### 📝 Example Config
 
 ```yaml
 settings:
     log_level: info
 
 keybindings:
-    # Action Type 1: Simple Command
+    # 🚀 MODE 1: Simple Command
     - name: Terminal
       keys: ctrl+alt+t
       run: alacritty
 
-    # Action Type 2: Inline Script
-    # Automatically handles temp file creation and cleanup
+    - name: Volume Up
+      keys: volumeup
+      run: pactl set-sink-volume @DEFAULT_SINK@ +5%
+
+    # 🐍 MODE 2: Inline Script
+    # Great for logic involving variables or pipes!
     - name: System Info
       keys: super+i
       interpreter: python3
       script: |
           import platform
-          print(f"System: {platform.system()}")
+          print(f"OS: {platform.system()}")
 
-    # Action Type 3: External File
-    # Supports tilde expansion (~)
+    - name: Screenshot
+      keys: print
+      interpreter: bash
+      script: |
+          file="$HOME/Pictures/screen-$(date +%s).png"
+          grim "$file"
+          notify-send "📸 Screenshot taken"
+
+    # 📂 MODE 3: External File
     - name: Backup
       keys: super+b
       file: ~/scripts/backup.sh
 ```
 
-### Action Types
+## 💻 CLI Usage
 
-1.  **run**: Executes the string in a shell.
-2.  **script**: Requires `interpreter` (e.g., `bash`, `python3`). Writes content to a secure temporary file, executes it, and deletes it upon completion.
-3.  **file**: Executes an existing file on disk.
+Manage the daemon easily with flags.
 
-### Key Syntax
+| Flag                | Description                               |
+| :------------------ | :---------------------------------------- |
+| `-b` `--background` | 👻 Run ghkd in the background.            |
+| `-r` `--reload`     | 🔄 Reload config of the running instance. |
+| `-k` `--kill`       | 💀 Gracefully kill the running instance.  |
+| `-c` `--config`     | 📂 Use a custom config path.              |
+| `-v` `--version`    | ℹ️ Show version.                          |
 
-Keys are case-insensitive. Combine modifiers and keys with `+`.
+### ⚡ Quick Workflow
 
-- **Modifiers:** `ctrl`, `alt`, `shift`, `super`
-- **Keys:** `a-z`, `0-9`, `f1-f12`
-- **Special:** `enter`, `space`, `tab`, `esc`, `backspace`, `print`, `delete`, `home`, `end`
-- **Media:** `volumeup`, `volumedown`, `mute`, `playpause`, etc.
+1.  **Start the daemon:**
+    ```bash
+    ghkd -b
+    ```
+2.  **Edit your config file.**
+3.  **Apply changes:**
+    ```bash
+    ghkd -r
+    ```
+4.  **Stop it:**
+    ```bash
+    ghkd -k
+    ```
 
-## Shutdown
+## ❓ Troubleshooting
 
-Pressing `Ctrl+C` triggers a graceful shutdown:
+- **⛔ "Permission denied":**
+  Run `groups` in your terminal. If you don't see `input`, run the permission setup command above and **reboot**.
 
-1.  Stops the keyboard listener.
-2.  Sends `SIGTERM` to all currently running commands.
-3.  Waits up to 5 seconds for processes to exit.
-4.  Force kills any remaining processes.
-5.  Cleans up temporary files generated by inline scripts.
+- **⌨️ "No keyboards found":**
+  ghkd filters out mice/power buttons strictly. Ensure your kernel sees your device as a keyboard via `cat /proc/bus/input/devices`.
+
+- **⚠️ "Daemon already running":**
+  ghkd uses a lock file at `/tmp/ghkd.pid`. If it crashed hard, run `ghkd -k` to clean it up.
