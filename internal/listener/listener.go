@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"path/filepath"
 	"slices"
-	"strings"
 	"sync"
 
 	"github.com/glowfi/ghkd/internal/hotkey"
@@ -40,9 +39,6 @@ func (l *Listener) Start(ctx context.Context) error {
 	for _, path := range keyboards {
 		device, err := evdev.Open(path)
 		if err != nil {
-			continue
-		}
-		if strings.Contains(strings.ToLower(device.Name), "mouse") {
 			continue
 		}
 		fmt.Printf("Listening: %s\n", device.Name)
