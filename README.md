@@ -10,7 +10,8 @@ It reads input directly from the kernel (`evdev`), which means it works **everyw
 - **📦 Zero Dependencies:** Written in pure Go. No bloat, no X11 libraries required.
 - **⚡ 3 Execution Modes:**
     1.  **Run:** Execute simple commands.
-    2.  **Script:** Write inline Bash/Python/Node scripts directly in your config.
+    2.  **Script:** Write inline Bash/Python/Node/Ruby(can be anything as long as interpreter is installed in your system)
+        scripts directly in your config.
     3.  **File:** Execute external scripts.
 - **🔄 Hot Reload:** Update your config on the fly without restarting.
 - **🛡️ Smart Detection:** Automatically detects keyboards and ignores mice/peripherals.
