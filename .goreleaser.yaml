@@ -10,7 +10,6 @@ builds:
       - linux
     goarch:
       - amd64
-      - arm64
     # The main file path
     main: ./main.go
     binary: ghkd
