@@ -1,24 +1,40 @@
 package registry
 
 import (
+	"sync"
+
 	"github.com/glowfi/ghkd/internal/config"
 )
 
 type Registry struct {
+	mu       sync.RWMutex // Read-Write Mutex
 	bindings []config.Keybinding
 }
 
-func NewRegistry(keyBindings []config.Keybinding) *Registry {
+// NewRegistry creates a new registry
+func NewRegistry(bindings []config.Keybinding) *Registry {
 	return &Registry{
-		bindings: keyBindings,
+		bindings: bindings,
 	}
 }
 
-// Match finds a keybinding that matches pressed keys
+// Update replaces the current keybindings with new ones (Thread-Safe)
+func (r *Registry) Update(bindings []config.Keybinding) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	r.bindings = bindings
+}
+
+// Match finds a keybinding matching pressed keys (Thread-Safe)
 func (r *Registry) Match(pressed []uint16) *config.Keybinding {
+	r.mu.RLock() // Read lock allows multiple readers, blocks writers
+	defer r.mu.RUnlock()
+
 	for i := range r.bindings {
-		if r.bindings[i].KeyCombination.Matches(pressed) {
-			return &r.bindings[i]
+		// Use pointer to avoid copying
+		kb := &r.bindings[i]
+		if kb.KeyCombination.Matches(pressed) {
+			return kb
 		}
 	}
 	return nil
