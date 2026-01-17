@@ -5,37 +5,24 @@ project_name: ghkd
 
 builds:
   - env:
-      - CGO_ENABLED=0 # Set to 0 for static binaries (recommended for Linux)
+      - CGO_ENABLED=0
     goos:
       - linux
     goarch:
       - amd64
-    # The main file path
-    main: ./main.go
+    main: ./cmd/ghkd
     binary: ghkd
 
 archives:
-  - format: tar.gz
-    # This creates a folder structure inside the archive
-    wrap_in_directory: true
-    format_overrides:
-      - goos: windows
-        format: zip
+  - format: binary
+    # This template will name the file like: ghkd_linux_amd64
     name_template: >-
-      {{ .ProjectName }}_
-      {{- .Version }}_
+      {{ .Binary }}_
       {{- .Os }}_
       {{- .Arch }}
 
 checksum:
   name_template: 'checksums.txt'
 
-snapshot:
-  name_template: "{{ incpatch .Version }}-next"
-
 changelog:
   sort: asc
-  filters:
-    exclude:
-      - '^docs:'
-      - '^test:'
