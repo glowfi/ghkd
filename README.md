@@ -1,5 +1,9 @@
 # 🎹 ghkd - Go Hotkey Daemon
 
+<!-- <p align="center"> -->
+  <img src="./images/logo.png" alt="Project Logo" width=400/>
+<!-- </p> -->
+
 **ghkd** is a blazing fast, system-level hotkey daemon for Linux. 🚀
 
 It reads input directly from the kernel (`evdev`), which means it works **everywhere**: Wayland, X11, and even the TTY console. No more fighting with compositor-specific config files!
@@ -57,11 +61,36 @@ Since **ghkd** reads hardware input directly, it needs access to `/dev/input/`. 
 
 Create your config at `~/.config/ghkd/config.yaml`.
 
-### 🔑 Syntax
+## ⌨️ Key Syntax & Rules
 
-- **Modifiers:** `ctrl`, `alt`, `shift`, `super` (meta/win).
-- **Keys:** `a-z`, `0-9`, `f1-f12`, `print`, `space`, `enter`, etc.
-- **Media:** `volumeup`, `mute`, `playpause`, `brightnessup`, etc.
+Defining hotkeys is case-insensitive. Keys are combined using the `+` symbol.
+
+### ⚠️ The Golden Rules
+
+1.  **Exactly One Main Key:** Your binding must have exactly **one** non-modifier key (e.g., `t`, `enter`, `space`). You cannot combine two main keys like `a+b`.
+2.  **Modifiers:** You can use as many modifiers as you like (`ctrl`, `alt`, `shift`, `super`).
+
+### 🧱 Supported Keys
+
+[Check more Supported Keymaps](https://raw.githubusercontent.com/glowfi/ghkd/refs/heads/main/internal/hotkey/keymap.go)
+
+| Category       | Available Keys                                                           |
+| :------------- | :----------------------------------------------------------------------- |
+| **Modifiers**  | `super` `win`, `ctrl`, `alt`, `shift`                                    |
+| **Standard**   | `a-z`, `0-9`, `f1-f24`                                                   |
+| **Navigation** | `left`, `right`, `up`, `down`, `home`, `end`                             |
+| **Special**    | `space`, `enter`, `tab`, `esc`, `backspace`, `print`, `insert`, `delete` |
+| **Media**      | `volumeup`, `volumedown`, `mute`, `playpause`, `brightnessup`            |
+
+### ✅ Examples
+
+| Status         | Combo               | Reason                                  |
+| :------------- | :------------------ | :-------------------------------------- |
+| ✅ **Valid**   | `ctrl+alt+t`        | Modifiers + 1 Main Key.                 |
+| ✅ **Valid**   | `super+shift+enter` | Multiple modifiers are allowed.         |
+| ✅ **Valid**   | `volumeup`          | Special keys can work alone.            |
+| ❌ **Invalid** | `ctrl+a+b`          | **Error:** Two main keys (`a` and `b`). |
+| ❌ **Invalid** | `ctrl+alt`          | **Error:** No main key specified.       |
 
 ### 📝 Example Config
 
@@ -86,7 +115,7 @@ keybindings:
           print(f"OS: {platform.system()}")
 
     - name: Screenshot
-      keys: print
+      keys: meta+print
       interpreter: bash
       script: |
           file="$HOME/Pictures/screen-$(date +%s).png"
