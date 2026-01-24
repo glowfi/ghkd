@@ -123,7 +123,10 @@ Flags:
 	}
 	defer daemon.RemovePID()
 
-	runDaemon(configPath)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	runDaemon(ctx, configPath)
 }
 
 func isRunning() bool {
@@ -150,10 +153,7 @@ func isRunning() bool {
 	return false
 }
 
-func runDaemon(configPath string) {
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
+func runDaemon(ctx context.Context, configPath string) {
 	// Load Config
 	cfg, err := config.LoadConfig(configPath)
 	if err != nil {
@@ -190,7 +190,7 @@ func runDaemon(configPath string) {
 				if match := reg.Match(pressed); match != nil {
 					// Execute in goroutine to not block listener
 					go func(m *config.Keybinding) {
-						if err := exec.Execute(m); err != nil {
+						if err := exec.Execute(ctx, m); err != nil {
 							fmt.Printf("Error: %v\n", err)
 						}
 					}(match)
@@ -221,7 +221,6 @@ func runDaemon(configPath string) {
 	}
 
 	// Cleanup
-	cancel()
 	lst.Stop()
 	if err := exec.Shutdown(); err != nil {
 		log.Println(err)

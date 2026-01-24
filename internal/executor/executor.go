@@ -1,6 +1,7 @@
 package executor
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"os"
@@ -27,22 +28,22 @@ func New() *Executor {
 }
 
 // Execute runs the action for a keybinding
-func (e *Executor) Execute(kb *config.Keybinding) error {
+func (e *Executor) Execute(ctx context.Context, kb *config.Keybinding) error {
 	switch {
 	case kb.Run != "":
-		return e.executeCommand(kb)
+		return e.executeCommand(ctx, kb)
 	case kb.Script != "" && kb.Interpreter != "":
-		return e.executeScript(kb)
+		return e.executeScript(ctx, kb)
 	case kb.File != "":
-		return e.executeFile(kb)
+		return e.executeFile(ctx, kb)
 	default:
 		return fmt.Errorf("no action defined for keybinding: %s", kb.Name)
 	}
 }
 
 // executeCommand runs a simple command
-func (e *Executor) executeCommand(kb *config.Keybinding) error {
-	cmd := exec.Command("sh", "-c", kb.Run)
+func (e *Executor) executeCommand(ctx context.Context, kb *config.Keybinding) error {
+	cmd := exec.CommandContext(ctx, "sh", "-c", kb.Run)
 
 	// Don't wait for command to finish (async)
 	if err := cmd.Start(); err != nil {
@@ -64,7 +65,7 @@ func (e *Executor) executeCommand(kb *config.Keybinding) error {
 }
 
 // executeScript runs an inline script with interpreter
-func (e *Executor) executeScript(kb *config.Keybinding) error {
+func (e *Executor) executeScript(ctx context.Context, kb *config.Keybinding) error {
 	// Create temp file
 	tmpFile, err := os.CreateTemp("/tmp", fmt.Sprintf("hotkeysd-*%s", kb.Name))
 	if err != nil {
@@ -90,7 +91,7 @@ func (e *Executor) executeScript(kb *config.Keybinding) error {
 	os.Chmod(tmpPath, 0o700)
 
 	// Execute
-	cmd := exec.Command(kb.Interpreter, tmpPath)
+	cmd := exec.CommandContext(ctx, kb.Interpreter, tmpPath)
 
 	if err := cmd.Start(); err != nil {
 		if err := os.Remove(tmpPath); err != nil {
@@ -127,7 +128,7 @@ func expandPath(path string) string {
 }
 
 // executeFile runs an external script file
-func (e *Executor) executeFile(kb *config.Keybinding) error {
+func (e *Executor) executeFile(ctx context.Context, kb *config.Keybinding) error {
 	path := expandPath(kb.File)
 
 	// Check file exists
@@ -141,10 +142,10 @@ func (e *Executor) executeFile(kb *config.Keybinding) error {
 	// Check if executable
 	if info.Mode()&0o111 != 0 {
 		// Executable - run directly
-		cmd = exec.Command(path)
+		cmd = exec.CommandContext(ctx, path)
 	} else {
 		// Not executable - run with sh
-		cmd = exec.Command("sh", path)
+		cmd = exec.CommandContext(ctx, "sh", path)
 	}
 
 	if err := cmd.Start(); err != nil {
