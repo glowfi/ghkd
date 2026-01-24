@@ -64,6 +64,15 @@ Flags:
 
 	flag.Parse()
 
+	if !(showVersion || kill || reload) {
+		if _, err := os.Stat(configPath); err != nil {
+			if os.IsNotExist(err) {
+				log.Fatalf("error: config file not found at %s (use -c/--config to specify a valid path)", configPath)
+			}
+			log.Fatalf("error accessing config file %s: %v", configPath, err)
+		}
+	}
+
 	// 3. Handle Immediate Actions (Version, Kill, Reload)
 
 	if showVersion {
