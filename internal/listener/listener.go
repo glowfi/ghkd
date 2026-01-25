@@ -11,24 +11,24 @@ import (
 	"github.com/holoplot/go-evdev"
 )
 
-const inputDir = "/dev/input"
-
 type Listener struct {
-	pressed []uint16
-	devices []*evdev.InputDevice
-	eventsC chan uint16
-	wg      sync.WaitGroup
-	mu      sync.RWMutex
+	pressed  []uint16
+	devices  []*evdev.InputDevice
+	eventsC  chan uint16
+	inputDir string
+	wg       sync.WaitGroup
+	mu       sync.RWMutex
 }
 
-func NewListener() *Listener {
+func NewListener(inputDir string) *Listener {
 	return &Listener{
-		eventsC: make(chan uint16, 100),
+		eventsC:  make(chan uint16, 100),
+		inputDir: inputDir,
 	}
 }
 
 func (l *Listener) Start(ctx context.Context) error {
-	keyboards, err := findKeyboards()
+	keyboards, err := findKeyboards(l.inputDir)
 	if err != nil {
 		return err
 	}
@@ -116,7 +116,7 @@ func (l *Listener) readDevice(ctx context.Context, device *evdev.InputDevice) {
 	}
 }
 
-func findKeyboards() ([]string, error) {
+func findKeyboards(inputDir string) ([]string, error) {
 	pattern := filepath.Join(inputDir, "event*")
 	matches, err := filepath.Glob(pattern)
 	if err != nil {
