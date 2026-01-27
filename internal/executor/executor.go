@@ -75,7 +75,7 @@ func (e *Executor) executeScript(ctx context.Context, kb *config.Keybinding) err
 	tmpPath := tmpFile.Name()
 
 	// Write script content
-	content := kb.Interpreter + "\n" + kb.Script
+	content := kb.Script
 	if _, err := tmpFile.WriteString(content); err != nil {
 		if err := tmpFile.Close(); err != nil {
 			return err
