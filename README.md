@@ -1,101 +1,133 @@
-# ghkd - Go Hotkey Daemon
+<div align="center">
 
-<p align="center">
-<img src="./images/logo.png" alt="Project Logo" width=400/>
-</p>
+# ⌨️ ghkd
 
-**ghkd** is a fast, system-level hotkey daemon for Linux.
+<img src="./images/logo.png" width="420"/>
 
-It reads input directly from the kernel (`evdev`), which means it works **everywhere**: Wayland, X11, and even the TTY console. No more fighting with compositor-specific config files.
+**A system-level hotkey daemon for Linux**
 
-## Features
+Wayland • X11 • TTY • Anywhere
 
-- **Display Server Agnostic:** Works perfectly on Hyprland, Sway, Gnome, KDE, X11, or no GUI at all.
-- **Zero Dependencies:** Written in pure Go. No bloat, no X11 libraries required.
-- **3 Execution Modes:**
-    1.  **Run:** Execute simple commands.
-    2.  **Script:** Write inline Bash/Python/Node/Ruby scripts directly in your config.
-    3.  **File:** Execute external scripts.
-- **Hot Reload:** Update your config on the fly without restarting.
-- **Smart Detection:** Automatically detects keyboards and ignores mice/peripherals.
-- **Background Mode:** Built-in daemon management (start, stop, reload).
+![Go](https://img.shields.io/badge/Go-1.21+-00ADD8?logo=go)
+![Linux](https://img.shields.io/badge/platform-linux-success?logo=linux)
+![Zero Dependencies](https://img.shields.io/badge/dependencies-none-lightgrey)
+![License](https://img.shields.io/github/license/glowfi/ghkd)
 
-## Installation
+</div>
 
-### Prerequisites
+---
 
-- Linux Kernel
-- Go 1.21+ (only if building from source)
+## ✨ Overview
 
-### Build from Source
+**ghkd** is a fast, kernel-level hotkey daemon for Linux.
+
+Unlike compositor-bound solutions, ghkd reads input directly from **evdev**, allowing global hotkeys that work everywhere:
+
+- Wayland compositors
+- X11 environments
+- Desktop environments
+- TTY console sessions
+
+No compositor configs. No display server coupling.
+
+---
+
+## 🚀 Features
+
+- 🖥 **Display Server Agnostic** — Wayland, X11, or no GUI
+- ⚡ **Kernel-Level Input** — reads directly from `/dev/input`
+- 🧱 **Zero Dependencies** — pure Go binary
+- 🔁 **Hot Reload** — update config without restarting
+- 🧠 **Smart Device Detection** — ignores mice & peripherals
+- 🔧 **Daemon Management** — built-in background control
+
+### Execution Modes
+
+| Mode       | Description                          |
+| ---------- | ------------------------------------ |
+| **Run**    | Execute commands directly            |
+| **Script** | Inline Bash/Python/Node/Ruby scripts |
+| **File**   | Execute external scripts             |
+
+---
+
+## 📦 Installation
+
+### Option 1 — Build From Source
 
 ```bash
 git clone https://github.com/glowfi/ghkd.git
 cd ghkd
 go build -o ghkd ./main.go
 sudo mv ghkd /usr/local/bin/
-cd ..
-rm -rf ghkd
 ```
 
-### Install from Releases
+---
+
+### Option 2 — Download Release Binary
 
 ```bash
-wget "https://github.com/glowfi/ghkd/releases/download/v1.0.0/ghkd_linux_amd64" -O "ghkd_linux_amd64"
+wget https://github.com/glowfi/ghkd/releases/download/v1.0.0/ghkd_linux_amd64
 chmod +x ghkd_linux_amd64
-sudo mv ghkd_linux_amd64 /usr/local/bin/
+sudo mv ghkd_linux_amd64 /usr/local/bin/ghkd
 ```
 
-## Permissions Setup
+---
 
-Since **ghkd** reads hardware input directly, it needs access to `/dev/input/`. You do **not** need root if you add your user to the `input` group.
+## 🔐 Permissions Setup
 
-1.  **Add user to group:**
-    ```bash
-    sudo usermod -aG input $USER
-    ```
-2.  **Reboot** (or log out & log in) for changes to take effect.
+ghkd accesses hardware input devices.
 
-## Configuration
+Add your user to the `input` group:
 
-Create your config at `~/.config/ghkd/config.yaml`.
+```bash
+sudo usermod -aG input $USER
+```
 
-## Key Syntax & Rules
+Then **log out or reboot**.
 
-Defining hotkeys is case-insensitive. Keys are combined using the `+` symbol.
+---
 
-### Important Rules
+## ⚙️ Configuration
 
-1.  **Exactly One Main Key:** Your binding must have exactly **one** non-modifier key (e.g., `t`, `enter`, `space`). You cannot combine two main keys like `a+b`.
-2.  **Modifiers:** You can use as many modifiers as you like (`ctrl`, `alt`, `shift`, `super`).
+Create:
+
+```
+~/.config/ghkd/config.yaml
+```
+
+---
+
+## ⌨️ Keybinding Rules
+
+### Core Rules
+
+1. Exactly **one main key** per binding
+2. Unlimited modifier keys allowed
+3. Case-insensitive syntax
+4. Keys joined using `+`
+
+---
 
 ### Supported Keys
 
-[See full keymap reference](https://raw.githubusercontent.com/glowfi/ghkd/refs/heads/main/internal/hotkey/keymap.go)
+Full reference:
+[https://raw.githubusercontent.com/glowfi/ghkd/main/internal/hotkey/keymap.go](https://raw.githubusercontent.com/glowfi/ghkd/main/internal/hotkey/keymap.go)
 
-| Category       | Available Keys                                                           |
-| :------------- | :----------------------------------------------------------------------- |
-| **Modifiers**  | `super`, `win`, `ctrl`, `alt`, `shift`                                   |
-| **Standard**   | `a-z`, `0-9`, `f1-f24`                                                   |
-| **Navigation** | `left`, `right`, `up`, `down`, `home`, `end`                             |
-| **Special**    | `space`, `enter`, `tab`, `esc`, `backspace`, `print`, `insert`, `delete` |
-| **Media**      | `volumeup`, `volumedown`, `mute`, `playpause`, `brightnessup`            |
+| Category   | Examples                           |
+| ---------- | ---------------------------------- |
+| Modifiers  | `ctrl`, `alt`, `shift`, `super`    |
+| Standard   | `a-z`, `0-9`, `f1-f24`             |
+| Navigation | `left`, `right`, `home`, `end`     |
+| Special    | `enter`, `space`, `esc`, `tab`     |
+| Media      | `volumeup`, `mute`, `brightnessup` |
 
-### Examples
+---
 
-| Status      | Combo               | Reason                              |
-| :---------- | :------------------ | :---------------------------------- |
-| **Valid**   | `ctrl+alt+t`        | Modifiers + 1 Main Key.             |
-| **Valid**   | `super+shift+enter` | Multiple modifiers are allowed.     |
-| **Valid**   | `volumeup`          | Special keys can work alone.        |
-| **Invalid** | `ctrl+a+b`          | Error: Two main keys (`a` and `b`). |
-| **Invalid** | `ctrl+alt`          | Error: No main key specified.       |
-
-### Example Config
+## 🧠 Example Configuration
 
 ```yaml
 keybindings:
-    # MODE 1: Simple Command
     - name: Terminal
       keys: ctrl+alt+t
       run: alacritty
@@ -104,13 +136,12 @@ keybindings:
       keys: volumeup
       run: pactl set-sink-volume @DEFAULT_SINK@ +5%
 
-    # MODE 2: Inline Script
     - name: System Info
       keys: super+i
       interpreter: python3
       script: |
           import platform
-          print(f"OS: {platform.system()}")
+          print(platform.system())
 
     - name: Screenshot
       keys: meta+print
@@ -120,37 +151,83 @@ keybindings:
           grim "$file"
           notify-send "Screenshot taken"
 
-    # MODE 3: External File
     - name: Backup
       keys: super+b
       file: ~/scripts/backup.sh
 ```
 
-## CLI Usage
+---
 
-Manage the daemon with these flags:
+## 🖥 CLI Usage
 
-| Flag                | Description                            |
-| :------------------ | :------------------------------------- |
-| `-b` `--background` | Run ghkd in the background.            |
-| `-r` `--reload`     | Reload config of the running instance. |
-| `-k` `--kill`       | Gracefully kill the running instance.  |
-| `-c` `--config`     | Use a custom config path.              |
-| `-v` `--version`    | Show version.                          |
+| Flag                 | Description              |
+| -------------------- | ------------------------ |
+| `-b`, `--background` | Run daemon in background |
+| `-r`, `--reload`     | Reload configuration     |
+| `-k`, `--kill`       | Stop running instance    |
+| `-c`, `--config`     | Custom config path       |
+| `-v`, `--version`    | Show version             |
 
 ### Quick Start
 
-```sh
+```bash
 ghkd -b -c ~/.config/ghkd/config.yaml
 ```
 
-## Troubleshooting
+---
 
-- **"Permission denied":**
-  Run `groups` in your terminal. If you don't see `input`, run the permission setup command above and **reboot**.
+## 🛠 Troubleshooting
 
-- **"No keyboards found":**
-  ghkd filters out mice/power buttons. Ensure your kernel sees your device as a keyboard via `cat /proc/bus/input/devices`.
+### Permission denied
 
-- **"Daemon already running":**
-  ghkd uses a lock file at `/tmp/ghkd.pid`. If it crashed, run `ghkd -k` to clean it up.
+Ensure your user belongs to `input` group:
+
+```bash
+groups
+```
+
+Reboot after adding.
+
+---
+
+### No keyboards found
+
+Check kernel device detection:
+
+```bash
+cat /proc/bus/input/devices
+```
+
+---
+
+### Daemon already running
+
+```bash
+ghkd -k
+```
+
+(removes stale lock file)
+
+---
+
+## 🎯 Design Goals
+
+- Universal hotkeys
+- Minimal runtime overhead
+- Display-server independence
+- Predictable configuration
+- System-level reliability
+
+---
+
+## 🤝 Contributing
+
+Issues and PRs are welcome.
+
+Small focused contributions preferred.
+
+---
+
+## 📄 License
+
+GPL-3.0
