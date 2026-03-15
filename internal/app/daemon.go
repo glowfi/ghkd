@@ -135,10 +135,13 @@ func (d *Daemon) processEvents(ctx context.Context, lst *listener.Listener, reg 
 			}
 
 			if match := reg.Match(pressed); match != nil {
-				go func(m *config.Keybinding) {
-					if err := exec.Execute(ctx, m); err != nil {
-						fmt.Printf("Error: %v\n", err)
+				go func(cfg *config.Keybinding) {
+					if err := exec.Execute(ctx, cfg); err != nil {
+						errMsg := fmt.Sprintf("Error: %v\n", err)
+						log.Println(errMsg)
 					}
+					msg := fmt.Sprintf("Key Matched: %s", cfg.KeyCombination.Raw)
+					log.Println(msg)
 				}(match)
 			}
 		}
